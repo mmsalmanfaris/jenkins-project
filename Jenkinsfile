@@ -17,12 +17,12 @@ pipeline {
                     }
                 }
                 
-                stage('Backend Setup') {
+                stage('Backend') {
                     steps {
                         dir('backend') {
                             sh """
                             ${PYTHON_VERSION} -m venv venv
-                            source ${VIRTUAL_ENV}
+                            . ${VIRTUAL_ENV}
                             pip install --upgrade pip
                             pip install -r requirements.txt
                             """
