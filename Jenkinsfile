@@ -7,11 +7,6 @@ pipeline {
     }
 
     stages {
-        stage('Modules'){
-            steps{
-                sh 'sudo apt-get update && sudo apt-get install -y nodejs npm python3 python3-venv python3-pip'
-            }
-        }
         stage('Dependencies') {
             parallel {
                 stage('Frontend') {
