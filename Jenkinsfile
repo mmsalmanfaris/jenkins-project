@@ -7,7 +7,7 @@ pipeline {
     }
 
     stages {
-        stage('Dependencies') {
+        stage('Install Dependencies') {
             parallel {
                 stage('Frontend') {
                     steps {
@@ -26,6 +26,26 @@ pipeline {
                             pip install --upgrade pip
                             pip install -r requirements.txt
                             """
+                        }
+                    }
+                }
+            }
+        }
+        stage('Run Testing'){
+            parallel{
+                stage('React Test'){
+                    steps{
+                        dir('frontend'){
+                            sh 'CI=true npm run test'
+                            echo('React test successfull.')
+                        }
+                    }
+                }
+                stage('FastAPI Test'){
+                    steps{
+                        dir('backend'){
+                            sh 'pytest -v'
+                            echo('React test successfull.')
                         }
                     }
                 }
