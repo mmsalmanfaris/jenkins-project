@@ -44,7 +44,7 @@ pipeline {
                 stage('FastAPI Test'){
                     steps{
                         dir('backend'){
-                            sh 'pytest -v'
+                            sh 'PYTHONPATH=. venv/bin/pytest tests/ -v'
                             echo('React test successfull.')
                         }
                     }
