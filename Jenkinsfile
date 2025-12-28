@@ -19,7 +19,7 @@ pipeline {
                 
                 stage('Backend') {
                     steps {
-                        dir('backend') {
+                        dir('backend') { 
                             sh """
                             ${PYTHON_VERSION} -m venv venv
                             . ${VIRTUAL_ENV}
