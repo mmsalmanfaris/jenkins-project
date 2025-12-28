@@ -3,28 +3,34 @@ pipeline {
 
     environment {
         PYTHON_VERSION = "python3"
-        VIRTUAL_ENV = "venv/bin/activate" 
+        REGISTRY= "mmsalmanfaris"
+        GIT_COMMIT_SHORT= "${env.GIT_COMMIT.take(7)}"
     }
 
     stages {
         stage('Install Dependencies') {
             parallel {
                 stage('Frontend') {
+                    agent{
+                        docker {image 'node:20-alpine'}
+                    }
                     steps {
                         dir('frontend') {
-                            sh 'npm install'
+                            sh 'npm ci || npm install'
                         }
                     }
                 }
                 
                 stage('Backend') {
+                    agent{
+                        docker {image 'python:3.11-slim'}
+                    }
                     steps {
                         dir('backend') { 
                             sh """
                             ${PYTHON_VERSION} -m venv venv
-                            . ${VIRTUAL_ENV}
-                            pip install --upgrade pip
-                            pip install -r requirements.txt
+                            venv/bin/pip install --upgrade pip
+                            venv/bin/pip install -r requirements.txt
                             """
                         }
                     }
@@ -34,18 +40,29 @@ pipeline {
         stage('Run Testing'){
             parallel{
                 stage('Frontend'){
+                    agent{
+                        docker { image 'node:20-alpine'}
+                    }
                     steps{
                         dir('frontend'){
-                            sh 'CI=true npm run test'
-                            echo('Frontend test successfull.')
+                            sh 'CI=true npm run test -- -- watchAll=false'
+                            sh 'echo "Frontend test successfull"'
                         }
                     }
                 }
                 stage('Backend'){
+                    agent{
+                        docker { image 'python:3.11-slim'}
+                    }
                     steps{
                         dir('backend'){
-                            sh 'PYTHONPATH=. venv/bin/pytest tests/ -v'
-                            echo('Backend test successfull.')
+                            sh """
+                            ${PYTHON_VERSION} -m venv venv
+                            venv/bin/pip install --upgrade pip
+                            venv/bin/pip install -r requirements.txt
+                            PYTHONPATH=. venv/bin/pytest tests/ -v
+                            """
+                            sh 'echo "Backend test successfull"'
                         }
                     }
                 }
@@ -57,16 +74,16 @@ pipeline {
                 stage('Frontend'){
                     steps{
                         dir('frontend'){
-                            sh 'docker build -t mmsalmanfaris/advanced-jenkins-frontend:${env.GIT_COMMIT}'
-                            echo('Frontend docker build success')
+                            sh 'docker build -t ${REGISTRY}/advanced-jenkins-frontend:${GIT_COMMIT_SHORT} .'
+                            sh 'echo "Frontend docker build success"'
                         }
                     }
                 }
                 stage('Backend'){
                     steps{
                         dir('backend'){
-                            sh 'docker build -t mmsalmanfaris/advanced-jenkins-backend:${env.GIT_COMMIT}'
-                            echo('Backend docker build success')
+                            sh 'docker build -t ${REGISTRY}/advanced-jenkins-backend:${GIT_COMMIT_SHORT} .'
+                            sh 'echo "Backend docker build success"'
                         }
                     }
                 }
