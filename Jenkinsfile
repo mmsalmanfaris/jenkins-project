@@ -94,20 +94,23 @@ pipeline {
             steps{
                 withCredentials([usernamePassword(credentialsId: 'docker-creds', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
                     sh 'echo ${PASSWORD} | docker login -u ${USERNAME} --password-stdin'
-                    echo 'Login Success'
+                    sh 'echo "Login Success"'
                 }
             }
         }
-
-        stage('Push frontend image'){
-            steps{
-                    sh 'docker push mmsalmanfaris/advanced-jenkins-frontend:${env.GIT_COMMIT}'
+        stage('Push images'){
+            parallel{
+                stage('Push frontend image'){
+                    steps{
+                            sh 'docker push ${REGISTRY}/advanced-jenkins-frontend:${GIT_COMMIT_SHORT}'
+                        }
                 }
-        }
 
-        stage('Push backend image'){
-            steps{
-                    sh 'docker push mmsalmanfaris/advanced-jenkins-backend:${env.GIT_COMMIT}'
+                stage('Push backend image'){
+                    steps{
+                            sh 'docker push mmsalmanfaris/advanced-jenkins-backend:${GIT_COMMIT_SHORT}'
+                    }
+                }
             }
         }
     }
