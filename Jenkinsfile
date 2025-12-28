@@ -11,9 +11,6 @@ pipeline {
         stage('Install Dependencies') {
             parallel {
                 stage('Frontend') {
-                    agent{
-                        docker {image 'node:20-alpine'}
-                    }
                     steps {
                         dir('frontend') {
                             sh 'npm ci || npm install'
@@ -22,9 +19,6 @@ pipeline {
                 }
                 
                 stage('Backend') {
-                    agent{
-                        docker {image 'python:3.11-slim'}
-                    }
                     steps {
                         dir('backend') { 
                             sh """
@@ -40,20 +34,14 @@ pipeline {
         stage('Run Testing'){
             parallel{
                 stage('Frontend'){
-                    agent{
-                        docker { image 'node:20-alpine'}
-                    }
                     steps{
                         dir('frontend'){
-                            sh 'CI=true npm run test -- -- watchAll=false'
+                            sh 'CI=true npm test -- --watchAll=false'
                             sh 'echo "Frontend test successfull"'
                         }
                     }
                 }
                 stage('Backend'){
-                    agent{
-                        docker { image 'python:3.11-slim'}
-                    }
                     steps{
                         dir('backend'){
                             sh """
