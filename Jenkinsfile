@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         PYTHON_VERSION = "python3"
-        VIRTUAL_ENV = "venv/bin/activate"    
+        VIRTUAL_ENV = "venv/bin/activate" 
     }
 
     stages {
@@ -12,7 +12,7 @@ pipeline {
                 stage('Frontend') {
                     steps {
                         dir('frontend') {
-                            sh 'npm ci || npm install'
+                            sh 'npm install'
                         }
                     }
                 }
@@ -49,6 +49,48 @@ pipeline {
                         }
                     }
                 }
+            }
+        }
+
+        stage('Build Image'){
+            parallel{
+                stage('Frontend'){
+                    steps{
+                        dir('frontend'){
+                            sh 'docker build -t mmsalmanfaris/advanced-jenkins-frontend:${env.GIT_COMMIT}'
+                            echo('Frontend docker build success')
+                        }
+                    }
+                }
+                stage('Backend'){
+                    steps{
+                        dir('backend'){
+                            sh 'docker build -t mmsalmanfaris/advanced-jenkins-backend:${env.GIT_COMMIT}'
+                            echo('Backend docker build success')
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Login to dockerhub'){
+            step{
+                withCredentials([usernamePassword(credentialsId: 'docker-creds', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
+                    sh 'echo ${PASSWORD} | docker login -u ${USERNAME} --password-stdin'
+                    echo 'Login Success'
+                }
+            }
+        }
+
+        stage('Push frontend image'){
+            steps{
+                    sh 'docker push mmsalmanfaris/advanced-jenkins-frontend:${env.GIT_COMMIT}'
+                }
+        }
+
+        stage('Push backend image'){
+            steps{
+                    sh 'docker push mmsalmanfaris/advanced-jenkins-backend:${env.GIT_COMMIT}'
             }
         }
     }
