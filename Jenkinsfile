@@ -10,26 +10,23 @@ pipeline {
     stages {
 
         stage('Debug Context') {
-    steps {
-        sh '''
-          echo "CHANGE_ID=$CHANGE_ID"
-          echo "CHANGE_TARGET=$CHANGE_TARGET"
-          echo "BRANCH_NAME=$BRANCH_NAME"
-        '''
-    }
-}
-
+            steps {
+                sh '''
+                echo "CHANGE_ID=$CHANGE_ID"
+                echo "CHANGE_TARGET=$CHANGE_TARGET"
+                echo "BRANCH_NAME=$BRANCH_NAME"
+                '''
+            }
+        }
 
         stage('PR Guard') {
-    when {
-        expression { env.CHANGE_ID == null }
-    }
-    steps {
-        echo "Not a PR build. Skipping pipeline."
-        currentBuild.result = 'NOT_BUILT'
-        error('Stopping non-PR build')
-    }
-}
+            when {
+                expression { env.CHANGE_ID == null }
+            }
+            steps {
+                error "This pipeline is only for PRs"
+            }
+        }
 
         stage('Install Dependencies') {
             parallel {
