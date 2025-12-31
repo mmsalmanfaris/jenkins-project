@@ -19,7 +19,7 @@ pipeline{
                 expression {env.BRANCH_NAME == 'develop' && !env.CHANGE_ID}
             }
             steps{
-                echo "Develop branch push detected - skipping pieline"
+                echo "Develop branch push detected - skipping pipeline"
             }
         }
 
@@ -28,7 +28,7 @@ pipeline{
                 branch 'main'
             }
             steps{
-                echo "Release pieline"
+                echo "Release pipeline"
             }
         }
     }
