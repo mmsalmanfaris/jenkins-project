@@ -69,48 +69,57 @@ pipeline {
             }
         }
 
-        stage('Build Image'){
-            parallel{
-                stage('Frontend'){
-                    steps{
-                        dir('frontend'){
-                            sh 'docker build -t ${REGISTRY}/advanced-jenkins-frontend:${GIT_COMMIT_SHORT} .'
-                            sh 'echo "Frontend docker build success"'
-                        }
-                    }
-                }
-                stage('Backend'){
-                    steps{
-                        dir('backend'){
-                            sh 'docker build -t ${REGISTRY}/advanced-jenkins-backend:${GIT_COMMIT_SHORT} .'
-                            sh 'echo "Backend docker build success"'
-                        }
-                    }
-                }
-            }
-        }
+        // stage('Build Image'){
+        //     parallel{
+        //         stage('Frontend'){
+        //             steps{
+        //                 dir('frontend'){
+        //                     sh 'docker build -t ${REGISTRY}/advanced-jenkins-frontend:${GIT_COMMIT_SHORT} .'
+        //                     sh 'echo "Frontend docker build success"'
+        //                 }
+        //             }
+        //         }
+        //         stage('Backend'){
+        //             steps{
+        //                 dir('backend'){
+        //                     sh 'docker build -t ${REGISTRY}/advanced-jenkins-backend:${GIT_COMMIT_SHORT} .'
+        //                     sh 'echo "Backend docker build success"'
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
 
-        stage('Login to dockerhub'){
-            steps{
-                withCredentials([usernamePassword(credentialsId: 'docker-creds', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
-                    sh 'echo ${PASSWORD} | docker login -u ${USERNAME} --password-stdin'
-                    sh 'echo "Login Success"'
-                }
-            }
-        }
-        stage('Push images'){
-            parallel{
-                stage('Push frontend image'){
-                    steps{
-                            sh 'docker push ${REGISTRY}/advanced-jenkins-frontend:${GIT_COMMIT_SHORT}'
-                        }
-                }
+        // stage('Login to dockerhub'){
+        //     steps{
+        //         withCredentials([usernamePassword(credentialsId: 'docker-creds', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
+        //             sh 'echo ${PASSWORD} | docker login -u ${USERNAME} --password-stdin'
+        //             sh 'echo "Login Success"'
+        //         }
+        //     }
+        // }
+        // stage('Push images'){
+        //     parallel{
+        //         stage('Push frontend image'){
+        //             steps{
+        //                     sh 'docker push ${REGISTRY}/advanced-jenkins-frontend:${GIT_COMMIT_SHORT}'
+        //                 }
+        //         }
 
-                stage('Push backend image'){
-                    steps{
-                            sh 'docker push mmsalmanfaris/advanced-jenkins-backend:${GIT_COMMIT_SHORT}'
-                    }
-                }
+        //         stage('Push backend image'){
+        //             steps{
+        //                     sh 'docker push mmsalmanfaris/advanced-jenkins-backend:${GIT_COMMIT_SHORT}'
+        //             }
+        //         }
+        //     }
+        // }
+
+        post{
+            success {
+                echo "PR ${env.CHANGE_ID} passed"
+            }
+            failure{
+                echo "PR ${env.CHANGE_ID} failed"
             }
         }
     }
