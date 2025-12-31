@@ -114,7 +114,9 @@ pipeline {
         //     }
         // }
 
-        post{
+    }
+
+    post{
             success {
                 echo "PR ${env.CHANGE_ID} passed"
             }
@@ -122,5 +124,4 @@ pipeline {
                 echo "PR ${env.CHANGE_ID} failed"
             }
         }
-    }
 }
