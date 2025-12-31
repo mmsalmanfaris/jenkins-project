@@ -15,7 +15,9 @@ pipeline{
         }
 
         stage('Develop Branch - Skip'){
-            expression {env.BRANCH_NAME == 'develop' && !env.CHANGE_ID}
+            when{
+                expression {env.BRANCH_NAME == 'develop' && !env.CHANGE_ID}
+            }
             steps{
                 echo "Develop branch push detected - skipping pieline"
             }
