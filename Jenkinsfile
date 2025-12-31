@@ -8,6 +8,18 @@ pipeline {
     }
 
     stages {
+        stage('PR Guard'){
+            when{
+                not{
+                    expression {env.CHANGE_ID}
+                }
+            }
+
+            steps{
+                error "This pipeline is only for PR"
+            }
+        }
+
         stage('Install Dependencies') {
             parallel {
                 stage('Frontend') {
