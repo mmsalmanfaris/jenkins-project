@@ -8,17 +8,28 @@ pipeline {
     }
 
     stages {
-        stage('PR Guard'){
-            when{
-                not{
-                    expression {env.CHANGE_ID}
-                }
-            }
 
-            steps{
-                error "This pipeline is only for PR"
-            }
-        }
+        stage('Debug Context') {
+    steps {
+        sh '''
+          echo "CHANGE_ID=$CHANGE_ID"
+          echo "CHANGE_TARGET=$CHANGE_TARGET"
+          echo "BRANCH_NAME=$BRANCH_NAME"
+        '''
+    }
+}
+
+
+        stage('PR Guard') {
+    when {
+        expression { env.CHANGE_ID == null }
+    }
+    steps {
+        echo "Not a PR build. Skipping pipeline."
+        currentBuild.result = 'NOT_BUILT'
+        error('Stopping non-PR build')
+    }
+}
 
         stage('Install Dependencies') {
             parallel {
@@ -120,8 +131,11 @@ pipeline {
             success {
                 echo "PR ${env.CHANGE_ID} passed"
             }
-            failure{
-                echo "PR ${env.CHANGE_ID} failed"
-            }
+            failure {
+    echo env.CHANGE_ID ?
+        "PR ${env.CHANGE_ID} failed" :
+        "Non-PR build skipped"
+}
+
         }
 }
