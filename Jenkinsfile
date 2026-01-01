@@ -66,14 +66,40 @@ pipeline{
                 echo "Release pipeline"
             }
         }
+
+        //Testing / Debugging
+        stage('Slack Test') {
+            steps {
+                slackSend(
+                    tokenCredentialId: 'slack-token',
+                    channel: '#github-pr-check',
+                    botUser: true,
+                    message: "Jenkins Slack Test: ${env.JOB_NAME} - ${env.BUILD_NUMBER}"
+                )
+            }
+        }
+
     }
 
     post{
+
+        // Testing - Slack Message
+        always {
+            slackSend(
+                tokenCredentialId: 'slack-token',
+                channel: '#github-pr-check',
+                botUser: true,
+                message: "Test Slack from Jenkins"
+            )
+        }
+
         failure {
             script{
                 if(env.CHANGE_ID && env.CHANGE_TARGET =='develop'){
                     slackSend(
-                        webhookCredentialId: 'slack-webhook',
+                        tokenCredentialId: 'slack-token',
+                        channel: '#github-pr-check',
+                        botUser: true,
                         message: """ 
                                     ❌ *PR Check Failed*
                                     • Repo: ${env.JOB_NAME}
@@ -88,9 +114,11 @@ pipeline{
         }
         success{
             script{
-                if(env.CHANGE_ID && env.CHANGE_TARGE == 'develop' && currentBuild.PreviosBuild?.result == 'FAILURE'){
+                if(env.CHANGE_ID && env.CHANGE_TARGET == 'develop' && currentBuild.previousBuild?.result == 'FAILURE'){
                     slackSend(
-                        webhookCredentialId: 'slack-webhook',
+                        tokenCredentialId: 'slack-token',
+                        channel: '#github-pr-check',
+                        botUser: true,
                         message: """ 
                                     ✅ *PR Check Fixed*
                                     • Repo: ${env.JOB_NAME}
