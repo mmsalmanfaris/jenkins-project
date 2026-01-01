@@ -117,7 +117,7 @@ pipeline{
                                     - Repo: ${env.JOB_NAME}
                                     - PR: #${env.CHANGE_ID}
                                     - Branch: ${env.CHANGE_BRANCH}
-                                 """
+                                 """ .stripIndent()
                     )
                 }
             }
