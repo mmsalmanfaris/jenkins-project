@@ -108,8 +108,7 @@ pipeline{
                         tokenCredentialId: 'slack-token',
                         channel: '#github-pr-check',
                         botUser: true,
-                        message: """ 
-                                    PR Check Failed
+                        message: """ PR Check Failed
                                     *Repo:* ${env.JOB_NAME}
                                     *PR:* #${env.CHANGE_ID}
                                     *Branch:* ${env.CHANGE_BRANCH}
