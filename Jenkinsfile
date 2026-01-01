@@ -1,6 +1,10 @@
 pipeline{
     agent any
 
+    environment{
+        PYTHON_VERSION = "python3"
+    }
+
     stages{
         // Pull Request
         stage('CI - PR Validation'){
