@@ -69,6 +69,15 @@ pipeline{
     }
 
     post{
+
+        // Testing - Slack Message
+        always {
+            slackSend(
+                webhookCredentialId: 'slack-webhook',
+                message: "Test Slack from Jenkins"
+            )
+        }
+
         failure {
             script{
                 if(env.CHANGE_ID && env.CHANGE_TARGET =='develop'){
@@ -88,7 +97,7 @@ pipeline{
         }
         success{
             script{
-                if(env.CHANGE_ID && env.CHANGE_TARGE == 'develop' && currentBuild.PreviosBuild?.result == 'FAILURE'){
+                if(env.CHANGE_ID && env.CHANGE_TARGET == 'develop' && currentBuild.previousBuild?.result == 'FAILURE'){
                     slackSend(
                         webhookCredentialId: 'slack-webhook',
                         message: """ 
