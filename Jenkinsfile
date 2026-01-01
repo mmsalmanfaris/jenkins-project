@@ -49,6 +49,38 @@ pipeline{
             }
         }
 
+        stage('Run Testing'){
+            when{
+                allOf{
+                    expression {env.CHANGE_ID}
+                    expression {env.CHANGE_TARGET == 'develop'}
+                }
+            }
+            parallel{
+                stage('Frontend'){
+                    steps{
+                        dir('frontend'){
+                            sh 'CI=true npm test -- --watchAll=false'
+                            sh 'echo "Frontend test successfull"'
+                        }
+                    }
+                }
+                stage('Backend'){
+                    steps{
+                        dir('backend'){
+                            sh """
+                            ${PYTHON_VERSION} -m venv venv
+                            venv/bin/pip install --upgrade pip
+                            venv/bin/pip install -r requirements.txt
+                            PYTHONPATH=. venv/bin/pytest tests/ -v
+                            """
+                            sh 'echo "Backend test successfull"'
+                        }
+                    }
+                }
+            }
+        }
+
         stage('Develop Branch - Skip'){
             when{
                 expression {env.BRANCH_NAME == 'develop' && !env.CHANGE_ID}
@@ -76,14 +108,12 @@ pipeline{
                         tokenCredentialId: 'slack-token',
                         channel: '#github-pr-check',
                         botUser: true,
-                        message: """ 
-                                    ❌ *PR Check Failed*
-                                    • Repo: ${env.JOB_NAME}
-                                    • PR: #${env.CHANGE_ID}
-                                    • Branch: ${env.CHANGE_BRANCH}
-                                    • Author: ${env.CHANGE_AUTHOR}
-                                    • Build: ${env.BUILD_URL}
-                                 """
+                        message: """
+                                PR Check Failed :x:
+                                - Repo: ${env.JOB_NAME}
+                                - Branch: ${env.CHANGE_BRANCH}
+                                - Author: ${env.CHANGE_AUTHOR}
+                                """.stripIndent()
                     )
                 }
             }
@@ -95,14 +125,12 @@ pipeline{
                         tokenCredentialId: 'slack-token',
                         channel: '#github-pr-check',
                         botUser: true,
-                        message: """ 
-                                    ✅ *PR Check Fixed*
-                                    • Repo: ${env.JOB_NAME}
-                                    • PR: #${env.CHANGE_ID}
-                                    • Branch: ${env.CHANGE_BRANCH}
-                                    • Author: ${env.CHANGE_AUTHOR}
-                                    • Build: ${env.BUILD_URL}
-                                 """
+                        message: """
+                                PR Error Fixed ✅
+                                - Repo: ${env.JOB_NAME}
+                                - Branch: ${env.CHANGE_BRANCH}
+                                - Author: ${env.CHANGE_AUTHOR}
+                                """.stripIndent()
                     )
                 }
             }
