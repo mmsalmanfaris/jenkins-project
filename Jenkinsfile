@@ -66,33 +66,9 @@ pipeline{
                 echo "Release pipeline"
             }
         }
-
-        //Testing / Debugging
-        stage('Slack Test') {
-            steps {
-                slackSend(
-                    tokenCredentialId: 'slack-token',
-                    channel: '#github-pr-check',
-                    botUser: true,
-                    message: "Jenkins Slack Test: ${env.JOB_NAME} - ${env.BUILD_NUMBER}"
-                )
-            }
-        }
-
     }
 
     post{
-
-        // Testing - Slack Message
-        always {
-            slackSend(
-                tokenCredentialId: 'slack-token',
-                channel: '#github-pr-check',
-                botUser: true,
-                message: "Test Slack from Jenkins"
-            )
-        }
-
         failure {
             script{
                 if(env.CHANGE_ID && env.CHANGE_TARGET =='develop'){
