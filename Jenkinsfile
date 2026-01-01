@@ -73,7 +73,7 @@ pipeline{
         // Testing - Slack Message
         always {
             slackSend(
-                webhookCredentialId: 'slack-webhook',
+                tokenCredentialId: 'slack-webhook',
                 message: "Test Slack from Jenkins"
             )
         }
@@ -82,7 +82,7 @@ pipeline{
             script{
                 if(env.CHANGE_ID && env.CHANGE_TARGET =='develop'){
                     slackSend(
-                        webhookCredentialId: 'slack-webhook',
+                        tokenCredentialId: 'slack-webhook',
                         message: """ 
                                     ❌ *PR Check Failed*
                                     • Repo: ${env.JOB_NAME}
@@ -99,7 +99,7 @@ pipeline{
             script{
                 if(env.CHANGE_ID && env.CHANGE_TARGET == 'develop' && currentBuild.previousBuild?.result == 'FAILURE'){
                     slackSend(
-                        webhookCredentialId: 'slack-webhook',
+                        tokenCredentialId: 'slack-webhook',
                         message: """ 
                                     ✅ *PR Check Fixed*
                                     • Repo: ${env.JOB_NAME}
