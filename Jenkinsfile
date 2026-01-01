@@ -110,9 +110,10 @@ pipeline{
                         botUser: true,
                         message: """
                                 PR Check Failed :x:
-                                *Repo:* ${env.JOB_NAME}
-                                *PR:* #${env.CHANGE_ID}
-                                *Branch:* ${env.CHANGE_BRANCH}
+                                - Repo: ${env.JOB_NAME}
+                                - PR: #${env.CHANGE_ID}
+                                - Branch: ${env.CHANGE_BRANCH}
+                                - Author: ${env.CHANGE_AUTHOR}
                                 """.stripIndent()
                     )
                 }
