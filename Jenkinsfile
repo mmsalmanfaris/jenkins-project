@@ -126,12 +126,10 @@ pipeline{
                         channel: '#github-pr-check',
                         botUser: true,
                         message: """ 
-                                    ✅ *PR Check Fixed*
+                                    PR Check Fixed ✅
                                     • Repo: ${env.JOB_NAME}
                                     • PR: #${env.CHANGE_ID}
                                     • Branch: ${env.CHANGE_BRANCH}
-                                    • Author: ${env.CHANGE_AUTHOR}
-                                    • Build: ${env.BUILD_URL}
                                  """
                     )
                 }
