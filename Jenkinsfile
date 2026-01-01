@@ -49,6 +49,38 @@ pipeline{
             }
         }
 
+        stage('Run Testing'){
+            when{
+                allOf{
+                    expression {env.CHANGE_ID}
+                    expression {env.CHANGE_TARGET == 'develop'}
+                }
+            }
+            parallel{
+                stage('Frontend'){
+                    steps{
+                        dir('frontend'){
+                            sh 'CI=true npm test -- --watchAll=false'
+                            sh 'echo "Frontend test successfull"'
+                        }
+                    }
+                }
+                stage('Backend'){
+                    steps{
+                        dir('backend'){
+                            sh """
+                            ${PYTHON_VERSION} -m venv venv
+                            venv/bin/pip install --upgrade pip
+                            venv/bin/pip install -r requirements.txt
+                            PYTHONPATH=. venv/bin/pytest tests/ -v
+                            """
+                            sh 'echo "Backend test successfull"'
+                        }
+                    }
+                }
+            }
+        }
+
         stage('Develop Branch - Skip'){
             when{
                 expression {env.BRANCH_NAME == 'develop' && !env.CHANGE_ID}
