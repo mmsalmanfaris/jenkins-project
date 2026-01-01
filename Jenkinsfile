@@ -111,7 +111,6 @@ pipeline{
                         message: """
                                 PR Check Failed :x:
                                 - Repo: ${env.JOB_NAME}
-                                - PR: #${env.CHANGE_ID}
                                 - Branch: ${env.CHANGE_BRANCH}
                                 - Author: ${env.CHANGE_AUTHOR}
                                 """.stripIndent()
@@ -126,11 +125,12 @@ pipeline{
                         tokenCredentialId: 'slack-token',
                         channel: '#github-pr-check',
                         botUser: true,
-                        message: """ PR Check Fixed ✅
-                                    *Repo:* ${env.JOB_NAME}
-                                    *PR:* #${env.CHANGE_ID}
-                                    *Branch:* ${env.CHANGE_BRANCH}
-                                 """
+                        message: """
+                                PR Error Fixed ✅
+                                - Repo: ${env.JOB_NAME}
+                                - Branch: ${env.CHANGE_BRANCH}
+                                - Author: ${env.CHANGE_AUTHOR}
+                                """.stripIndent()
                     )
                 }
             }
