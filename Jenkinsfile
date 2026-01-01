@@ -109,7 +109,7 @@ pipeline{
                         channel: '#github-pr-check',
                         botUser: true,
                         message: """ 
-                                    PR Check Failed ❌
+                                    PR Check Failed
                                     *Repo:* ${env.JOB_NAME}
                                     *PR:* #${env.CHANGE_ID}
                                     *Branch:* ${env.CHANGE_BRANCH}
