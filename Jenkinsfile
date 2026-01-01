@@ -108,16 +108,12 @@ pipeline{
                         tokenCredentialId: 'slack-token',
                         channel: '#github-pr-check',
                         botUser: true,
-                        message: """- Repo: ${env.JOB_NAME}
-                                    - PR: #${env.CHANGE_ID}
-                                    - Branch: ${env.CHANGE_BRANCH}
-                                    
-                                    
-                                    PR Check Failed
-                                    - Repo: ${env.JOB_NAME}
-                                    - PR: #${env.CHANGE_ID}
-                                    - Branch: ${env.CHANGE_BRANCH}
-                                 """ .stripIndent()
+                        message: """
+                                PR Check Failed :x:
+                                *Repo:* ${env.JOB_NAME}
+                                *PR:* #${env.CHANGE_ID}
+                                *Branch:* ${env.CHANGE_BRANCH}
+                                """.stripIndent()
                     )
                 }
             }
