@@ -110,9 +110,9 @@ pipeline{
                         botUser: true,
                         message: """ 
                                     PR Check Failed ❌
-                                    • Repo: ${env.JOB_NAME}
-                                    • PR: #${env.CHANGE_ID}
-                                    • Branch: ${env.CHANGE_BRANCH}
+                                    *Repo:* ${env.JOB_NAME}
+                                    *PR:* #${env.CHANGE_ID}
+                                    *Branch:* ${env.CHANGE_BRANCH}
                                  """
                     )
                 }
@@ -127,9 +127,9 @@ pipeline{
                         botUser: true,
                         message: """ 
                                     PR Check Fixed ✅
-                                    • Repo: ${env.JOB_NAME}
-                                    • PR: #${env.CHANGE_ID}
-                                    • Branch: ${env.CHANGE_BRANCH}
+                                    *Repo:* ${env.JOB_NAME}
+                                    *PR:* #${env.CHANGE_ID}
+                                    *Branch:* ${env.CHANGE_BRANCH}
                                  """
                     )
                 }
